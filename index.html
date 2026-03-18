@@ -7,18 +7,21 @@
     <style>
         body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #f0f2f5; }
         .card { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; width: 90%; max-width: 400px; }
-        h1 { font-size: 1.2rem; color: #333; }
+        h1 { font-size: 1.1rem; color: #666; margin-bottom: 0.5rem; }
+        .today-date { font-size: 1.2rem; font-weight: bold; color: #333; margin-bottom: 1.5rem; }
         .remaining { font-size: 3rem; font-weight: bold; color: #007bff; margin: 1rem 0; }
         .unit { font-size: 1.2rem; }
-        .info { font-size: 0.9rem; color: #666; line-height: 1.6; }
-        .progress-container { background: #eee; border-radius: 10px; height: 20px; margin: 15px 0; overflow: hidden; }
+        .info { font-size: 0.9rem; color: #666; line-height: 1.6; text-align: left; background: #f8f9fa; padding: 10px; border-radius: 8px; }
+        .progress-container { background: #eee; border-radius: 10px; height: 20px; margin: 20px 0; overflow: hidden; }
         .progress-bar { background: #007bff; height: 100%; transition: width 0.5s; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h1>今日の理想的なデータ残量</h1>
+    <h1>今日時点の理想的な残量</h1>
+    <div id="display-date" class="today-date">0000年00月00日</div>
+    
     <div class="remaining" id="remain-val">--<span class="unit">GB</span></div>
     
     <div class="progress-container">
@@ -26,31 +29,34 @@
     </div>
 
     <div class="info">
-        開始日: 2026/03/18<br>
-        終了日: 2027/03/18<br>
-        1日あたりの使用目安: <span id="daily-limit"></span> MB
+        ・契約開始: 2026/03/18<br>
+        ・有効期限: 2027/03/18<br>
+        ・1日あたりの目安: <span id="daily-limit"></span> GB
     </div>
 </div>
 
 <script>
     function updateCaclulation() {
-        const totalGB = 1024; // 1.0TB
+        const totalGB = 1024; 
         const startDate = new Date('2026-03-18');
         const endDate = new Date('2027-03-18');
         const today = new Date();
+
+        // 日付の表示用フォーマット
+        const y = today.getFullYear();
+        const m = today.getMonth() + 1;
+        const d = today.getDate();
+        document.getElementById('display-date').innerText = `${y}年${m}月${d}日`;
         
         // 合計日数の計算
         const totalDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
         
-        // 経過日数の計算 (今日を含む)
+        // 経過日数の計算 (今日を0日目とする)
         const diffTime = today - startDate;
         const elapsedDays = Math.max(0, Math.floor(diffTime / (1000 * 60 * 60 * 24)));
         
         // 残り日数の計算
         const remainingDays = Math.max(0, totalDays - elapsedDays);
-        
-        // 1日あたりの平均消費量 (GB)
-        const dailyAvg = totalGB / totalDays;
         
         // 今日時点であるべき残量 (GB)
         const idealRemaining = (remainingDays / totalDays) * totalGB;
@@ -59,7 +65,7 @@
         // 画面への反映
         document.getElementById('remain-val').innerHTML = idealRemaining.toFixed(2) + '<span class="unit">GB</span>';
         document.getElementById('bar').style.width = percent + '%';
-        document.getElementById('daily-limit').innerText = (dailyAvg * 1024).toFixed(1);
+        document.getElementById('daily-limit').innerText = (totalGB / totalDays).toFixed(2);
     }
 
     updateCaclulation();
