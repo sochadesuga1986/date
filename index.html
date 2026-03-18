@@ -11,9 +11,25 @@
         .today-date { font-size: 1.2rem; font-weight: bold; color: #333; margin-bottom: 1.5rem; }
         .remaining { font-size: 3rem; font-weight: bold; color: #007bff; margin: 1rem 0; }
         .unit { font-size: 1.2rem; }
-        .info { font-size: 0.9rem; color: #666; line-height: 1.6; text-align: left; background: #f8f9fa; padding: 10px; border-radius: 8px; }
+        .info { font-size: 0.9rem; color: #666; line-height: 1.6; text-align: left; background: #f8f9fa; padding: 10px; border-radius: 8px; margin-bottom: 20px; }
         .progress-container { background: #eee; border-radius: 10px; height: 20px; margin: 20px 0; overflow: hidden; }
         .progress-bar { background: #007bff; height: 100%; transition: width 0.5s; }
+        
+        /* ボタンのスタイル */
+        .reload-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            width: 100%;
+            font-weight: bold;
+        }
+        .reload-btn:hover { background-color: #0056b3; }
+        .reload-btn:active { transform: scale(0.98); }
     </style>
 </head>
 <body>
@@ -33,6 +49,8 @@
         ・有効期限: 2027/03/18<br>
         ・1日あたりの目安: <span id="daily-limit"></span> GB
     </div>
+
+    <button class="reload-btn" onclick="location.reload()">最新の状態に更新</button>
 </div>
 
 <script>
@@ -42,27 +60,19 @@
         const endDate = new Date('2027-03-18');
         const today = new Date();
 
-        // 日付の表示用フォーマット
         const y = today.getFullYear();
         const m = today.getMonth() + 1;
         const d = today.getDate();
         document.getElementById('display-date').innerText = `${y}年${m}月${d}日`;
         
-        // 合計日数の計算
         const totalDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
-        
-        // 経過日数の計算 (今日を0日目とする)
         const diffTime = today - startDate;
         const elapsedDays = Math.max(0, Math.floor(diffTime / (1000 * 60 * 60 * 24)));
-        
-        // 残り日数の計算
         const remainingDays = Math.max(0, totalDays - elapsedDays);
         
-        // 今日時点であるべき残量 (GB)
         const idealRemaining = (remainingDays / totalDays) * totalGB;
         const percent = (idealRemaining / totalGB) * 100;
 
-        // 画面への反映
         document.getElementById('remain-val').innerHTML = idealRemaining.toFixed(2) + '<span class="unit">GB</span>';
         document.getElementById('bar').style.width = percent + '%';
         document.getElementById('daily-limit').innerText = (totalGB / totalDays).toFixed(2);
