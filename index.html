@@ -9,11 +9,11 @@
         .card { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; width: 90%; max-width: 400px; }
         h1 { font-size: 1rem; color: #666; margin-bottom: 0.5rem; }
         .today-date { font-size: 1.2rem; font-weight: bold; color: #333; margin-bottom: 1.5rem; }
-        .remaining { font-size: 2.5rem; font-weight: bold; color: #007bff; margin: 1rem 0; font-variant-numeric: tabular-nums; }
+        .remaining { font-size: 3rem; font-weight: bold; color: #007bff; margin: 1rem 0; font-variant-numeric: tabular-nums; }
         .unit { font-size: 1.2rem; }
         .info { font-size: 0.85rem; color: #666; line-height: 1.6; text-align: left; background: #f8f9fa; padding: 12px; border-radius: 8px; margin-bottom: 20px; }
         .progress-container { background: #eee; border-radius: 10px; height: 20px; margin: 20px 0; overflow: hidden; }
-        .progress-bar { background: #007bff; height: 100%; transition: width 0.1s linear; }
+        .progress-bar { background: #007bff; height: 100%; transition: width 0.5s linear; }
         .reload-btn { background-color: #007bff; color: white; border: none; padding: 12px 20px; border-radius: 25px; font-size: 1rem; cursor: pointer; width: 100%; font-weight: bold; }
         .reload-btn:active { transform: scale(0.98); }
     </style>
@@ -24,7 +24,7 @@
     <h1>現在時刻の理論上の残量</h1>
     <div id="display-date" class="today-date">----年--月--日 --:--:--</div>
     
-    <div class="remaining" id="remain-val">--.--------<span class="unit">GB</span></div>
+    <div class="remaining" id="remain-val">--.--<span class="unit">GB</span></div>
     
     <div class="progress-container">
         <div class="progress-bar" id="bar" style="width: 0%"></div>
@@ -46,25 +46,22 @@
         const end = new Date('2027-03-18T00:00:00').getTime();
         const now = new Date().getTime();
 
-        // 日付と時刻の表示
         const d = new Date();
         document.getElementById('display-date').innerText = d.toLocaleString('ja-JP');
         
-        // 全体の期間(ミリ秒)と経過期間(ミリ秒)
         const totalDuration = end - start;
         const elapsed = now - start;
         
-        // 残り割合から残量を計算
         const remainingRatio = Math.max(0, (totalDuration - elapsed) / totalDuration);
         const currentIdealRemaining = totalGB * remainingRatio;
         
-        // 画面更新 (小数点8桁まで表示して動いているのを見せる)
-        document.getElementById('remain-val').innerHTML = currentIdealRemaining.toFixed(8) + '<span class="unit">GB</span>';
+        // 小数点以下2桁に修正
+        document.getElementById('remain-val').innerHTML = currentIdealRemaining.toFixed(2) + '<span class="unit">GB</span>';
         document.getElementById('bar').style.width = (remainingRatio * 100) + '%';
     }
 
-    // 0.1秒ごとに更新して「減っている」演出をする
-    setInterval(update, 100);
+    // 1秒ごとに更新
+    setInterval(update, 1000);
     update();
 </script>
 
